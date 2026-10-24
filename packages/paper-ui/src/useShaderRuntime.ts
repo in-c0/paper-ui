@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+// A page may mount several paper surfaces; probing GPU support per component
+// would allocate a context for every surface even before any shader is shown.
+let cachedWebglSupport: boolean | undefined;
+
 /**
  * Keep decorative GPU work out of background tabs and offscreen components.
  * The semantic DOM and CSS layers must remain mounted at all times.
@@ -19,6 +23,11 @@ export function useShaderRuntime(requested: boolean) {
       return;
     }
 
+    if (cachedWebglSupport !== undefined) {
+      setWebglSupported(cachedWebglSupport);
+      return;
+    }
+
     let context: WebGLRenderingContext | WebGL2RenderingContext | null = null;
     try {
       const canvas = document.createElement('canvas');
@@ -26,7 +35,8 @@ export function useShaderRuntime(requested: boolean) {
     } catch {
       // Browser or privacy setting disallows WebGL. The CSS fallback is sufficient.
     }
-    setWebglSupported(Boolean(context));
+    cachedWebglSupport = Boolean(context);
+    setWebglSupported(cachedWebglSupport);
     // Release the temporary *probe* context; the actual shader owns its own canvas.
     context?.getExtension('WEBGL_lose_context')?.loseContext();
   }, [requested]);
