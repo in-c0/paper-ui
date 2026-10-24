@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — material comparison and legibility
+
+- Studio can switch between live WebGL and CSS/original-artwork fallback without losing content.
+- Corrected copied Korean lettering JSX to use actual line breaks.
+- Refined matte paper and card shading; strengthened button and focus treatments.
+- Raised text contrast for explanatory content with a contrast regression test.
+- Added comparison, clipboard, and fallback browser coverage.
+
+
 ## Unreleased — quality hardening for the next alpha
 
 - Suspend decorative WebGL effects in background tabs and outside the viewport while preserving DOM content.
