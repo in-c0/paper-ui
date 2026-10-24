@@ -35,7 +35,7 @@ test('320px layout never clips device lab controls', async ({ page }) => {
 test('collects a three-second RAF sample and downloads its consented local JSON', async ({ page }) => {
   await page.getByRole('button', { name: '3 s' }).click();
   await page.getByRole('button', { name: 'Start local sample' }).click();
-  await expect(page.getByRole('button', { name: 'Start local sample' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Sampling…' })).toBeDisabled();
   await expect(page.getByText('Sample complete. You can export the locally generated report.')).toBeVisible({ timeout: 15000 });
   await expect(page.getByTestId('lab-p95')).toContainText('ms');
   await page.getByRole('combobox', { name: 'VoiceOver / TalkBack announces and operates controls' }).selectOption('issue');
