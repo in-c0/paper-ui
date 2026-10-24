@@ -148,3 +148,37 @@ test('the published CSS is present on interactive cards and buttons', async ({ p
   await expect(paper).toHaveCSS('cursor', 'pointer');
   await expect(paper).toHaveCSS('border-top-style', 'solid');
 });
+
+test('comparison toggles shader eligibility without hiding material content', async ({ page }) => {
+  const material = page.locator('.studio-preview__material');
+  await page.getByRole('button', { name: 'Compare without shader' }).click();
+  await expect(page.getByRole('button', { name: 'Restore shader' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(material).toHaveAttribute('data-shader-status', 'fallback');
+  await expect(page.getByText('A little, over time.', { exact: true }).first()).toBeVisible();
+  await page.getByRole('button', { name: 'Restore shader' }).click();
+  await expect(page.getByRole('button', { name: 'Compare without shader' })).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('Korean lettering copied snippet has actual lines and required imports', async ({ page }) => {
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.getByRole('button', { name: 'Written in graphite' }).click();
+  await page.getByRole('button', { name: 'Copy component' }).click();
+  const snippet = await page.evaluate(() => navigator.clipboard.readText());
+  expect(snippet).toContain("import '@in-c0/paper-ui/styles.css';\n");
+  expect(snippet).toContain('<PencilText font={korean}>');
+  expect(snippet).not.toContain('\\n');
+});
+
+test('inspector explanatory text passes basic 4.5:1 contrast check', async ({ page }) => {
+  const ratio = await page.locator('.studio-inspector__hint').first().evaluate((el) => {
+    const rgb = (s: string) => (s.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+    const lum = (v: number[]) => v.map((c) => {
+      const t = c / 255;
+      return t <= 0.04045 ? t / 12.92 : ((t + 0.055) / 1.055) ** 2.4;
+    }).reduce((sum, n, i) => sum + n * [0.2126, 0.7152, 0.0722][i], 0);
+    const foreground = lum(rgb(getComputedStyle(el).color));
+    const background = lum(rgb(getComputedStyle(el.closest('.studio-inspector')!).backgroundColor));
+    return (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05);
+  });
+  expect(ratio).toBeGreaterThanOrEqual(4.5);
+});

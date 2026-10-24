@@ -222,6 +222,7 @@ export function StudioApp() {
   const [tuning, setTuning] = useState<MaterialTuning>(initial.tuning);
   const [mode, setMode] = useState<Mode>('material');
   const [playing, setPlaying] = useState(true);
+  const [showShader, setShowShader] = useState(true);
   const [sample, setSample] = useState('A little, over time.');
   const [writing, setWriting] = useState('조금씩, 꾸준히.');
   const [writingKey, setWritingKey] = useState(0);
@@ -381,6 +382,7 @@ export function StudioApp() {
                 kind={chosenKind}
                 tuning={isWriting ? undefined : tuning}
                 paused={paused}
+                renderMode={showShader ? 'auto' : 'fallback'}
                 image={previewImage}
                 className="studio-preview__material"
               >
@@ -410,15 +412,28 @@ export function StudioApp() {
             </div>
             <div className="studio-preview__caption">
               <span>{isWriting ? 'Tegaki / letterforms' : MATERIAL_PRESETS[kind].label + ' / material'}</span>
-              <span>
-                {chosenKind === 'halftone'
-                  ? 'SOURCE IMAGE / LIVE FILTER'
-                  : chosenKind === 'paper-texture'
-                    ? 'SURFACE / LIVE'
-                    : paused
-                      ? 'MOTION PAUSED'
-                      : 'ANIMATED / LIVE'}
-              </span>
+              <div className="studio-preview__tools">
+                <span className="studio-preview__mode">
+                  {!showShader
+                    ? 'CSS / ORIGINAL'
+                    : chosenKind === 'halftone'
+                      ? 'IMAGE / LIVE FILTER'
+                      : chosenKind === 'paper-texture'
+                        ? 'SURFACE / LIVE'
+                        : paused
+                          ? 'MOTION PAUSED'
+                          : 'ANIMATED / LIVE'}
+                </span>
+                <button
+                  type="button"
+                  className="studio-compare"
+                  aria-pressed={!showShader}
+                  onClick={() => setShowShader((value) => !value)}
+                >
+                  {showShader ? 'Compare without shader' : 'Restore shader'}
+                  <span aria-hidden="true">↗</span>
+                </button>
+              </div>
             </div>
           </div>
           <div className="studio-bottom">
@@ -592,7 +607,7 @@ export function StudioApp() {
                           "import korean from 'tegaki/fonts/nanum-pen-script';",
                           '',
                           '<PencilText font={korean}>' + writing.replaceAll('<', '&lt;').replaceAll('>', '&gt;') + '</PencilText>',
-                        ].join('\\n')
+                        ].join('\n')
                       : sourceSnippet(kind, tuning, '/my-artwork.png'),
                     'React component copied.',
                   )
