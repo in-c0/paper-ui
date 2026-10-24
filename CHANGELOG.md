@@ -6,7 +6,8 @@
 - Corrected copied Korean lettering JSX to use actual line breaks.
 - Refined matte paper and card shading; strengthened button and focus treatments.
 - Raised text contrast for explanatory content with a contrast regression test.
-- Added comparison, clipboard, and fallback browser coverage.
+- Replaced the visible native file-picker control with an accessible, keyboard-focusable paper-style upload surface and local filename feedback.
+- Added comparison, clipboard, picker, and fallback browser coverage.
 
 
 ## Unreleased — quality hardening for the next alpha

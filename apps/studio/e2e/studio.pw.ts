@@ -97,6 +97,7 @@ test('the halftone image picker uses a local browser blob without server upload'
     buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="30"/></svg>'),
   });
   await expect(page.locator('.studio-live-status')).toContainText('Nothing uploaded');
+  await expect(page.locator('.studio-upload__filename')).toHaveText('sketch.svg');
 });
 
 test.afterEach(async ({ page }, testInfo) => {
@@ -181,4 +182,14 @@ test('inspector explanatory text passes basic 4.5:1 contrast check', async ({ pa
     return (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05);
   });
   expect(ratio).toBeGreaterThanOrEqual(4.5);
+});
+
+test('custom image picker exposes an accessible label without a native browser button', async ({ page }) => {
+  await page.getByRole('button', { name: 'Printed study' }).click();
+  const input = page.getByLabel('Your drawing');
+  await expect(input).toHaveAttribute('type', 'file');
+  await expect(page.getByText('Select image')).toBeVisible();
+  await expect(input).toHaveCSS('opacity', '0');
+  await input.focus();
+  await expect(page.locator('.studio-upload')).toHaveCSS('outline-style', 'solid');
 });

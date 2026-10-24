@@ -229,6 +229,7 @@ export function StudioApp() {
   const [ink, setInk] = useState<'soft' | 'dark'>('soft');
   const [saved, setSaved] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageName, setImageName] = useState('');
   const [status, setStatus] = useState('');
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -531,13 +532,18 @@ export function StudioApp() {
                   ))}
                   {kind === 'halftone' && (
                     <div className="studio-upload">
-                      <label htmlFor="halftone-upload">
-                        Use your own drawing <span>↗</span>
+                      <label htmlFor="halftone-upload" className="studio-upload__trigger">
+                        <span className="studio-upload__title">Your drawing</span>
+                        <span className="studio-upload__browse">
+                          Select image <span aria-hidden="true">↗</span>
+                        </span>
                       </label>
                       <input
                         id="halftone-upload"
+                        className="studio-upload__input"
                         type="file"
                         accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                        aria-describedby="halftone-help"
                         onChange={(event) => {
                           const file = event.target.files?.[0];
                           if (!file) return;
@@ -546,10 +552,14 @@ export function StudioApp() {
                             return;
                           }
                           setImageUrl(URL.createObjectURL(file));
+                          setImageName(file.name);
                           setStatus('Image preview updated locally. Nothing uploaded.');
                         }}
                       />
-                      <p>Images stay in this browser; nothing is uploaded.</p>
+                      <p className="studio-upload__filename" aria-live="polite">
+                        {imageName || 'SVG, PNG, JPG or WebP · up to 8 MB'}
+                      </p>
+                      <p id="halftone-help">Images stay in this browser; nothing is uploaded.</p>
                     </div>
                   )}
                 </>

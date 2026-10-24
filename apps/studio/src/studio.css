@@ -1023,3 +1023,63 @@ textarea:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .studio-compare { transition: none; }
 }
+
+/* Native file input stays keyboard accessible; its visible control is bespoke. */
+.studio-upload {
+  position: relative;
+  border: 1px solid #c9c0b2;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(255, 255, 255, 0.5), transparent 72%),
+    #eee9e1;
+  border-radius: 7px;
+  padding: 12px;
+}
+.studio-upload__trigger {
+  display: flex !important;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+.studio-upload__title {
+  color: #4b463f;
+  font-size: 12px;
+}
+.studio-upload__browse {
+  background: #f9f6ef;
+  border: 1px solid #cdc3b6;
+  color: #514a41;
+  border-radius: 5px;
+  padding: 10px 12px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 550;
+  transition: background-color 140ms ease;
+}
+.studio-upload__trigger:hover .studio-upload__browse {
+  background: #e4ded3;
+}
+.studio-upload:focus-within {
+  outline: 2px solid #645544;
+  outline-offset: 3px;
+}
+.studio-upload .studio-upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+.studio-upload__filename {
+  overflow-wrap: anywhere;
+  color: #59534b !important;
+  font-weight: 550;
+  margin-top: 12px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-upload__browse { transition: none; }
+}
