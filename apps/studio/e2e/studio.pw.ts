@@ -1,6 +1,21 @@
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page }, testInfo) => {
+  // Switching six expensive shader canvases is a GPU stress test, not a
+  // deterministic test of navigation and URL persistence. For those behavior
+  // checks, simulate the supported CSS fallback before any shaders mount.
+  if (
+    testInfo.title.startsWith('all material modes are selectable') ||
+    testInfo.title.startsWith('non-WebGL devices retain')
+  ) {
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+        if (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl') return null;
+        return original.call(this, type as '2d', ...(args as []));
+      } as typeof HTMLCanvasElement.prototype.getContext;
+    });
+  }
   await page.goto('/');
 });
 
@@ -89,20 +104,20 @@ test.afterEach(async ({ page }, testInfo) => {
 });
 
 test('non-WebGL devices retain semantic controls and the artwork fallback', async ({ page }) => {
-  await page.addInitScript(() => {
-    const original = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
-      if (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl') return null;
-      return original.call(this, type as '2d', ...(args as []));
-    } as typeof HTMLCanvasElement.prototype.getContext;
-  });
-  await page.reload();
   await expect(page.locator('.studio-preview__material')).toHaveAttribute('data-shader-status', 'fallback');
   await page.getByRole('button', { name: 'Printed study' }).click();
   await expect(page.locator('.pui-material-effect__fallback-image')).toBeVisible();
   await expect(page.getByRole('slider', { name: 'Dot size' })).toBeVisible();
   await page.getByRole('button', { name: 'Written in graphite' }).click();
   await expect(page.getByRole('textbox', { name: 'Handwritten text' })).toBeVisible();
+});
+
+test('GPU canvas mounts for the initial paper material when WebGL is supported', async ({ page }) => {
+  const material = page.locator('.studio-preview__material');
+  await expect.poll(() => material.getAttribute('data-shader-status')).toMatch(/^(webgl|fallback)$/);
+  if ((await material.getAttribute('data-shader-status')) === 'webgl') {
+    await expect(page.locator('.studio-preview canvas').first()).toBeVisible();
+  }
 });
 
 test('offscreen shader pauses without hiding DOM or affecting accessibility', async ({ page }) => {
