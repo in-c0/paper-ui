@@ -6,7 +6,7 @@ A small independent, experimental library for surfaces that feel like paper and 
 
 **Status:** experimental public npm alpha **0.1.0-alpha.1** (under the `alpha` dist-tag, not `latest`). Released on 2026-10-24. Mobile/browser interaction and real-registry React consumer tests pass; real-device GPU, accessibility, and visual-fidelity audits are still required.
 
-**[Explore the interactive Studio →](https://paper-ui-react-lab.vercel.app/)** · [Source code](https://github.com/in-c0/paper-ui) · [Release readiness](docs/RELEASE_CHECKLIST.md) · [npm alpha staging](docs/NPM_ALPHA_STAGING.md)
+**[Explore the interactive Studio →](https://paper-ui-in-c0.vercel.app/)** · [Source code](https://github.com/in-c0/paper-ui) · [Release readiness](docs/RELEASE_CHECKLIST.md) · [npm alpha staging](docs/NPM_ALPHA_STAGING.md)
 
 ## Components
 
@@ -63,7 +63,7 @@ bun run test
 bun run dev
 ```
 
-Open the local Vite URL or try the [hosted interactive Studio](https://paper-ui-react-lab.vercel.app/) to explore materials and handwriting. For browser quality checks:
+Open the local Vite URL or try the [hosted interactive Studio](https://paper-ui-in-c0.vercel.app/) to explore materials and handwriting. For browser quality checks:
 
 ```bash
 bunx playwright install chromium
