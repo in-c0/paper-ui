@@ -91,6 +91,8 @@ test('the reduced-motion preference disables ambient shader controls', async ({ 
 
 test('the halftone image picker uses a local browser blob without server upload', async ({ page }) => {
   await page.getByRole('button', { name: 'Printed study' }).click();
+  await expect(page.getByText('No sample drawing')).toBeVisible();
+  await expect(page.locator('.pui-material-effect__fallback-image')).toHaveCount(0);
   await page.locator('input[type=file]').setInputFiles({
     name: 'sketch.svg',
     mimeType: 'image/svg+xml',
@@ -98,15 +100,24 @@ test('the halftone image picker uses a local browser blob without server upload'
   });
   await expect(page.locator('.studio-live-status')).toContainText('Nothing uploaded');
   await expect(page.locator('.studio-upload__filename')).toHaveText('sketch.svg');
+  await expect(page.locator('.pui-material-effect__fallback-image')).toBeVisible();
+  await expect(page.getByText('No sample drawing')).toHaveCount(0);
 });
 
 test.afterEach(async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath('studio.png'), fullPage: true });
 });
 
-test('non-WebGL devices retain semantic controls and the artwork fallback', async ({ page }) => {
+test('non-WebGL devices retain semantic controls and a fallback for a selected local image', async ({ page }) => {
   await expect(page.locator('.studio-preview__material')).toHaveAttribute('data-shader-status', 'fallback');
   await page.getByRole('button', { name: 'Printed study' }).click();
+  await expect(page.getByText('No sample drawing')).toBeVisible();
+  await expect(page.locator('.pui-material-effect__fallback-image')).toHaveCount(0);
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'owned-sketch.svg',
+    mimeType: 'image/svg+xml',
+    buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M10 10L90 90"/></svg>'),
+  });
   await expect(page.locator('.pui-material-effect__fallback-image')).toBeVisible();
   await expect(page.getByRole('slider', { name: 'Dot size' })).toBeVisible();
   await page.getByRole('button', { name: 'Written in graphite' }).click();
