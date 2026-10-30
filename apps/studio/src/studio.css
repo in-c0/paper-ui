@@ -300,6 +300,32 @@ textarea:focus-visible {
     0 12px 28px #51463229,
     0 0 0 1px #6e625022;
 }
+.studio-preview__empty {
+  width: 100%;
+  height: 100%;
+  padding: clamp(18px, 4vw, 44px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  background: #f2f1e8;
+  color: #48443e;
+}
+.studio-preview__empty strong {
+  font: 400 clamp(23px, 3vw, 36px) / 1.2 "DM Serif Display", Georgia, serif;
+}
+.studio-preview__empty p {
+  max-width: 30ch;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.studio-preview__empty span {
+  font-size: 11px;
+  color: #777168;
+}
 .studio-preview__composition {
   display: flex;
   flex-direction: column;
