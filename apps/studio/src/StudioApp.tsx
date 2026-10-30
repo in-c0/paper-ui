@@ -277,7 +277,7 @@ export function StudioApp() {
     }
   }
 
-  const previewImage = imageUrl ?? '/halftone-study.svg';
+  const previewImage = imageUrl ?? undefined;
 
   return (
     <div className="studio-app">
@@ -384,10 +384,17 @@ export function StudioApp() {
                 kind={chosenKind}
                 tuning={isWriting ? undefined : tuning}
                 paused={paused}
-                renderMode={showShader ? 'auto' : 'fallback'}
+                renderMode={chosenKind === 'halftone' && !previewImage ? 'fallback' : showShader ? 'auto' : 'fallback'}
                 image={previewImage}
                 className="studio-preview__material"
               >
+                {chosenKind === 'halftone' && !previewImage && (
+                  <div className="studio-preview__empty" role="status">
+                    <strong>No sample drawing</strong>
+                    <p>Select your own image in the inspector to preview the halftone effect.</p>
+                    <span>The image stays in your browser.</span>
+                  </div>
+                )}
                 {chosenKind !== 'halftone' && (
                   <div className="studio-preview__composition">
                     <div className="studio-preview__tiny">w h i s p e r s .</div>
